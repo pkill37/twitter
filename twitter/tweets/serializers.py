@@ -1,4 +1,4 @@
-from tweets.models import Tweet
+from twitter.tweets.models import Tweet
 from rest_framework import serializers
 
 
