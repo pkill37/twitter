@@ -4,5 +4,5 @@ from django.contrib.auth.models import User
 
 
 class Tweet(TimestampableModel):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
     text = models.CharField(max_length=140)

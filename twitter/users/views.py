@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from twitter.users.serializers import UserSerializer, GroupSerializer
+from twitter.tweets.models import Tweet
+from twitter.tweets.serializers import TweetSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -17,3 +19,10 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+
+class UserTweetsViewSet(viewsets.ModelViewSet):
+    serializer_class = TweetSerializer
+
+    def get_queryset(self):
+        return Tweet.objects.filter(user=self.kwargs['user_pk'])

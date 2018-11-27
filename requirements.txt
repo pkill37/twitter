@@ -3,3 +3,4 @@ djangorestframework==3.9.0
 djangorestframework-simplejwt==3.2.3
 drf-yasg==1.11.0
 drf-yasg[validation]
+drf-nested-routers==0.91

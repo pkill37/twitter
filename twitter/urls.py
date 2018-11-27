@@ -1,16 +1,21 @@
 from django.conf.urls import url, include
-from rest_framework import routers, permissions
-from twitter.users.views import UserViewSet, GroupViewSet
+from rest_framework.permissions import AllowAny 
+from twitter.users.views import UserViewSet, GroupViewSet, UserTweetsViewSet
 from twitter.tweets.views import TweetViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework.routers import SimpleRouter
+from rest_framework_nested.routers import NestedSimpleRouter
 
 
-router = routers.SimpleRouter(trailing_slash=False)
+router = SimpleRouter(trailing_slash=False)
 router.register(r'users', UserViewSet)
 router.register(r'groups', GroupViewSet)
 router.register(r'tweets', TweetViewSet)
+
+users_router = NestedSimpleRouter(router, r'users', lookup='user')
+users_router.register(r'tweets', UserTweetsViewSet, base_name='user-tweets')
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -23,7 +28,7 @@ schema_view = get_schema_view(
    ),
    validators=['flex', 'ssv'],
    public=True,
-   permission_classes=(permissions.AllowAny,),
+   permission_classes=(AllowAny,),
 )
 
 # Wire up our API using automatic URL routing.
@@ -31,11 +36,12 @@ schema_view = get_schema_view(
 urlpatterns = [
     # Resources
     url(r'^api/', include(router.urls)),
+    url(r'^api/', include(users_router.urls)),
 
     # Token
-    url(r'^api/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    url(r'^api/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
-    url(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
+    url(r'^api/token$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    url(r'^api/token/refresh$', TokenRefreshView.as_view(), name='token_refresh'),
+    url(r'^api/token/verify$', TokenVerifyView.as_view(), name='token_verify'),
 
     # Documentation
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
