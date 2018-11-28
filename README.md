@@ -1,35 +1,35 @@
 # twitter
 
+A simple RESTful API of a Twitter clone developed in the context of a Service-Oriented Computing class at the Faculty of Electrical Engineering and Computing of the University of Zagreb.
+
 ## Development
 
-Sync the database for the first time
+Sync the database:
 
 ```
 python manage.py migrate
 ```
 
-Create initial user
+Create superuser:
 
 ```
 python manage.py createsuperuser --email fabio.maia@fer.hr --username fabio
 ```
 
-Run the server
+Run the development server:
 
 ```
 python manage.py runserver
 ```
 
-Try to login
-
-```
-curl -H 'Accept: application/json; indent=4' -u fabio:demo1234 http://127.0.0.1:8000/users/
-```
-
 ## Tests
 
-Run tests
+Run tests:
 
 ```
 python manage.py tests --parallel
 ```
+
+## Documentation
+
+See automatically generated documentation at `/swagger` or `/redoc`.
