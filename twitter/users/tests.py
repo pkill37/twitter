@@ -6,26 +6,11 @@ from twitter.tests import TwitterTestCase
 
 
 class UserAPIViewTestCase(TwitterTestCase):
-    def setUp(self):
-        super(UserAPIViewTestCase, self).setUp()
-
-        self.users = []
-        self.n = random.randint(2, 10)
-        for i in range(1, self.n):
-            self.users.append(User.objects.create_user(self.random_string(), self.random_string(), self.random_string()))
-
-    def tearDown(self):
-        for u in self.users:
-            u.delete()
-        self.users = []
-
-        super(UserAPIViewTestCase, self).tearDown()
-
     def test_user_get_list(self):
         response = self.client.get('/api/users')
         self.assertEqual(200, response.status_code)
-        n = len(json.loads(response.content).get('results'))
-        self.assertEqual(n, self.n)
+        count = json.loads(response.content).get('count')
+        self.assertEqual(count, self.users_count)
 
     def test_user_get_detail(self):
         user = random.choice(self.users)
@@ -45,3 +30,13 @@ class UserAPIViewTestCase(TwitterTestCase):
         }
         response = self.client.post('/api/users', data)
         self.assertEqual(201, response.status_code)
+
+    def test_user_delete(self):
+        data = {
+            'username': 'laura',
+            'email': 'laura.bakotic@fer.hr',
+            'password': 'demo1234'
+        }
+        user = User.objects.create_user(**data)
+        response = self.client.delete(f'/api/users/{user.pk}')
+        self.assertEqual(204, response.status_code)
