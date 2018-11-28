@@ -2,10 +2,15 @@ import json
 import random
 from django.contrib.auth.models import User
 from django.urls import reverse
-from twitter.tests import TwitterTestCase
+from twitter.tests import TwitterAPITestCase
+from faker import Faker
+fake = Faker()
 
 
-class UserAPIViewTestCase(TwitterTestCase):
+class TwitterAPIUserTestCase(TwitterAPITestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def test_user_get_list(self):
         response = self.client.get('/api/users')
         self.assertEqual(200, response.status_code)
@@ -23,20 +28,26 @@ class UserAPIViewTestCase(TwitterTestCase):
         self.assertEqual(email, user.email)
 
     def test_user_post(self):
-        data = {
-            'username': 'laura',
-            'email': 'laura.bakotic@fer.hr',
-            'password': 'demo1234'
-        }
-        response = self.client.post('/api/users', data)
+        response = self.client.post('/api/users', self.random_user())
         self.assertEqual(201, response.status_code)
 
     def test_user_delete(self):
-        data = {
-            'username': 'laura',
-            'email': 'laura.bakotic@fer.hr',
-            'password': 'demo1234'
-        }
-        user = User.objects.create_user(**data)
+        user = random.choice(self.users)
         response = self.client.delete(f'/api/users/{user.pk}')
         self.assertEqual(204, response.status_code)
+
+    def test_user_put_invalid_partial(self):
+        user = random.choice(self.users)
+        response = self.client.put(f'/api/users/{user.pk}', {'username': fake.user_name()})
+        self.assertNotEqual(200, response.status_code)
+
+    def test_user_put_valid_full(self):
+        user = random.choice(self.users)
+        new_user = self.random_user()
+        response = self.client.put(f'/api/users/{user.pk}', new_user)
+        content = json.loads(response.content)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(content.get('username'), new_user['username'])
+        self.assertEqual(content.get('email'), new_user['email'])
+        self.assertEqual(content.get('first_name'), new_user['first_name'])
+        self.assertEqual(content.get('last_name'), new_user['last_name'])

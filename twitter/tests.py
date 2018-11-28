@@ -4,14 +4,16 @@ import string
 from django.contrib.auth.models import User
 from twitter.tweets.models import Tweet
 from rest_framework.test import APITestCase
+from faker import Faker
+fake = Faker()
 
 
-class TwitterTestCase(APITestCase):
+class TwitterAPITestCase(APITestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.admin = {'username': 'john', 'email': 'john.doe@fer.hr', 'password': 'demo1234'}
         self.users_count = random.randint(2, 50)
         self.tweets_count = random.randint(2, 100)
+        self.admin = self.random_user()
         self.users = []
         self.tweets = []
 
@@ -19,12 +21,12 @@ class TwitterTestCase(APITestCase):
         # Populate users
         self.users.append(User.objects.create_superuser(**self.admin))
         for i in range(1, self.users_count):
-            self.users.append(User.objects.create_user(self.random_string(), self.random_string(), self.random_string()))
+            self.users.append(User.objects.create_user(**self.random_user()))
         self.assertEqual(len(self.users), self.users_count)
 
         # Populate tweets
         for i in range(0, self.tweets_count):
-            self.tweets.append(Tweet.objects.create(user_id=random.choice(self.users).pk, text=self.random_string(140)))
+            self.tweets.append(Tweet.objects.create(user_id=random.choice(self.users).pk, text=fake.text()))
         self.assertEqual(len(self.tweets), self.tweets_count)
 
         # Authenticate all requests
@@ -51,5 +53,11 @@ class TwitterTestCase(APITestCase):
         self.token = content.get('access')
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
 
-    def random_string(self, length=6):
-        return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
+    def random_user(self):
+        return {
+            'username': fake.user_name(),
+            'email': fake.email(),
+            'first_name': fake.first_name(),
+            'last_name': fake.last_name(),
+            'password': fake.password()
+        }
