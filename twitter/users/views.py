@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from rest_framework import viewsets
-from twitter.users.serializers import UserSerializer, GroupSerializer
+from twitter.users.serializers import UserSerializer
 from twitter.tweets.models import Tweet
 from twitter.tweets.serializers import TweetSerializer
 
@@ -13,15 +13,10 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-
-
 class UserTweetsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows the tweets of users to be viewed or edited.
+    """
     serializer_class = TweetSerializer
 
     def get_queryset(self):

@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 from rest_framework.permissions import AllowAny 
-from twitter.users.views import UserViewSet, GroupViewSet, UserTweetsViewSet
+from twitter.users.views import UserViewSet, UserTweetsViewSet
 from twitter.tweets.views import TweetViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from drf_yasg.views import get_schema_view
@@ -11,7 +11,6 @@ from rest_framework_nested.routers import NestedSimpleRouter
 
 router = SimpleRouter(trailing_slash=False)
 router.register(r'users', UserViewSet)
-router.register(r'groups', GroupViewSet)
 router.register(r'tweets', TweetViewSet)
 
 users_router = NestedSimpleRouter(router, r'users', lookup='user')
