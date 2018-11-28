@@ -48,3 +48,8 @@ class TwitterAPITweetTestCase(TwitterAPITestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(content.get('user'), new_tweet['user'])
         self.assertEqual(content.get('text'), new_tweet['text'])
+
+    def test_tweet_patch(self):
+        tweet = random.choice(self.tweets)
+        response = self.client.patch(f'/api/tweets/{tweet.pk}', {'text': fake.text(140)})
+        self.assertEqual(200, response.status_code)

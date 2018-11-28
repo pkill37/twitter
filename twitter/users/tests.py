@@ -36,12 +36,12 @@ class TwitterAPIUserTestCase(TwitterAPITestCase):
         response = self.client.delete(f'/api/users/{user.pk}')
         self.assertEqual(204, response.status_code)
 
-    def test_user_put_invalid_partial(self):
+    def test_user_put_invalid(self):
         user = random.choice(self.users)
         response = self.client.put(f'/api/users/{user.pk}', {'username': fake.user_name()})
         self.assertNotEqual(200, response.status_code)
 
-    def test_user_put_valid_full(self):
+    def test_user_put_valid(self):
         user = random.choice(self.users)
         new_user = self.random_user()
         response = self.client.put(f'/api/users/{user.pk}', new_user)
@@ -51,3 +51,8 @@ class TwitterAPIUserTestCase(TwitterAPITestCase):
         self.assertEqual(content.get('email'), new_user['email'])
         self.assertEqual(content.get('first_name'), new_user['first_name'])
         self.assertEqual(content.get('last_name'), new_user['last_name'])
+
+    def test_user_patch(self):
+        user = random.choice(self.users)
+        response = self.client.patch(f'/api/users/{user.pk}', {'username': fake.user_name()})
+        self.assertEqual(200, response.status_code)
