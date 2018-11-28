@@ -61,3 +61,9 @@ class TwitterAPITestCase(APITestCase):
             'last_name': fake.last_name(),
             'password': fake.password()
         }
+
+    def random_tweet(self):
+        return {
+            'user': random.choice(self.users).pk,
+            'text': fake.text(140) 
+        }

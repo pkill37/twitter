@@ -2,10 +2,10 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'first_name', 'last_name', 'groups')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'groups')
         extra_kwargs = {
             'email': {'required': True},
             'username': {'required': True},
@@ -14,7 +14,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ('url', 'name')
+        fields = ('id', 'name')
