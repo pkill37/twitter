@@ -5,6 +5,30 @@ from faker import Faker
 fake = Faker()
 
 
+class TwitterAPITokenTestCase(TwitterAPITestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def test_token(self):
+        response = self.client.post(f'/api/token', {'username': self.admin['username'], 'password': self.admin['password']})
+        self.assertEqual(200, response.status_code)
+        content = json.loads(response.content)
+        self.assertIn('access', content)
+        self.assertIn('refresh', content)
+
+    def test_token_refresh(self):
+        response = self.client.post(f'/api/token/refresh', {'refresh': self.token_refresh})
+        self.assertEqual(200, response.status_code)
+        content = json.loads(response.content)
+        self.assertIn('access', content)
+
+    def test_token_verify(self):
+        response = self.client.post(f'/api/token/verify', {'token': self.token_access})
+        self.assertEqual(200, response.status_code)
+        content = json.loads(response.content)
+        self.assertEqual({}, content)
+
+
 class TwitterAPIUserTweetsTestCase(TwitterAPITestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

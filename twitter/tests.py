@@ -50,8 +50,9 @@ class TwitterAPITestCase(APITestCase):
         content = json.loads(response.content)
         self.assertIn('access', content)
         self.assertIn('refresh', content)
-        self.token = content.get('access')
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
+        self.token_access = content.get('access')
+        self.token_refresh = content.get('refresh')
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token_access)
 
     def random_user(self):
         return {
