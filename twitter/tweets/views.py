@@ -9,3 +9,4 @@ class TweetViewSet(viewsets.ModelViewSet):
     """
     queryset = Tweet.objects.all().order_by('-created_at')
     serializer_class = TweetSerializer
+    ordering_fields = ('text',)

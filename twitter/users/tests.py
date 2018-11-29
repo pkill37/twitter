@@ -1,10 +1,48 @@
 import json
 import random
-from django.contrib.auth.models import User
-from django.urls import reverse
 from twitter.tests import TwitterAPITestCase
 from faker import Faker
 fake = Faker()
+
+
+class TwitterAPIUserTweetsTestCase(TwitterAPITestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def test_user_tweets_get_list(self):
+        user = random.choice(self.users)
+        response = self.client.get(f'/api/users/{user.pk}/tweets')
+        self.assertEqual(200, response.status_code)
+
+    def test_user_tweets_post(self):
+        user = random.choice(self.users)
+        response = self.client.post(f'/api/users/{user.pk}/tweets', {'user': user.pk, 'text': fake.text(140)})
+        self.assertEqual(201, response.status_code)
+
+    def test_user_tweets_get_detail(self):
+        tweet = random.choice(self.tweets)
+        response = self.client.get(f'/api/users/{tweet.user.pk}/tweets/{tweet.pk}')
+        self.assertEqual(200, response.status_code)
+
+    def test_user_tweets_delete(self):
+        tweet = random.choice(self.tweets)
+        response = self.client.delete(f'/api/users/{tweet.user.pk}/tweets/{tweet.pk}')
+        self.assertEqual(204, response.status_code)
+
+    def test_user_tweets_put_invalid(self):
+        tweet = random.choice(self.tweets)
+        response = self.client.put(f'/api/users/{tweet.user.pk}/tweets/{tweet.pk}', {'text': fake.text(140)})
+        self.assertNotEqual(200, response.status_code)
+
+    def test_user_tweets_put_valid(self):
+        tweet = random.choice(self.tweets)
+        response = self.client.put(f'/api/users/{tweet.user.pk}/tweets/{tweet.pk}', {'user': tweet.user.pk, 'text': fake.text(140)})
+        self.assertEqual(200, response.status_code)
+
+    def test_user_tweets_patch(self):
+        tweet = random.choice(self.tweets)
+        response = self.client.patch(f'/api/users/{tweet.user.pk}/tweets/{tweet.pk}', {'text': fake.text(140)})
+        self.assertEqual(200, response.status_code)
 
 
 class TwitterAPIUserTestCase(TwitterAPITestCase):

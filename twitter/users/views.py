@@ -11,6 +11,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+    ordering_fields = ('username', 'email')
 
 
 class UserTweetsViewSet(viewsets.ModelViewSet):
@@ -18,6 +19,7 @@ class UserTweetsViewSet(viewsets.ModelViewSet):
     API endpoint that allows the tweets of users to be viewed or edited.
     """
     serializer_class = TweetSerializer
+    ordering_fields = ('text',)
 
     def get_queryset(self):
         return Tweet.objects.filter(user=self.kwargs['user_pk'])
