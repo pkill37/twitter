@@ -35,7 +35,7 @@ python manage.py runserver
 Run tests:
 
 ```
-python manage.py tests --parallel
+python manage.py test --parallel
 ```
 
 ## Documentation
